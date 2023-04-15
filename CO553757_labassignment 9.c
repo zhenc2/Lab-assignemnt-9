@@ -65,16 +65,16 @@ void printRecords(struct RecordType pData[], int dataSz)
     printf(" \n");
 }
 
-void insertRecord(struct HashType hashTable[], struct RecordType record, int tableSize)
+void insertRecord(struct HashType *hashTable, struct RecordType *record, int tableSize)
 {
     // call the hash function to get the index
-    int index = hash(record.id, tableSize);
+    int index = hash(record->id, tableSize);
 
     // if the RecordType at that index is NULL
     if (hashTable[index].r == NULL)
     {
         // set 'record' equal to the HashType pointer in the table at index
-        hashTable[index].r = &record;
+        hashTable[index].r = record;
     }
     else
     {
@@ -84,11 +84,12 @@ void insertRecord(struct HashType hashTable[], struct RecordType record, int tab
         {
             curr = curr->next;
         }
-        curr->next = &record;
+        curr->next = record;
+        curr->next->next = NULL;
     }
 }
 
-void displayRecordsInHash(struct HashType hashTable[], int tableSize)
+void displayRecordsInHash(struct HashType *hashTable, int tableSize)
 {
     for (int i = 0; i < tableSize; ++i)
     {
@@ -101,8 +102,8 @@ void displayRecordsInHash(struct HashType hashTable[], int tableSize)
                 printf("%d %c %d -> ", curr->id, curr->name, curr->order);
                 curr = curr->next;
             }
-            printf("NULL\n");
         }
+           printf("NULL\n");
     }
 }
 
@@ -114,10 +115,10 @@ int main(void)
     printRecords(pRecords, recordSz);
 
     // Initialize the hash table
-    int hashTableSize = 10;
+    int hashTableSize = 11;
     struct HashType* hashTable = (struct HashType*)calloc(hashTableSize, sizeof(struct HashType));// Insert records into the hash table
     for (int i = 0; i < recordSz; ++i){
-    insertRecord(hashTable, *(pRecords + i), hashTableSize);
+    insertRecord(hashTable, &pRecords[i], hashTableSize);
     }
 
     // Display records in the hash table
